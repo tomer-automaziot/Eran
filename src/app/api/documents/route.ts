@@ -19,18 +19,10 @@ export async function GET() {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  const documents = await Promise.all(
-    (data || []).map(async (doc) => {
-      let generatedPdfUrl = null;
-      if (doc.generated_pdf_path) {
-        const { data: signedData } = await supabase.storage
-          .from("pdfs")
-          .createSignedUrl(doc.generated_pdf_path, 3600);
-        generatedPdfUrl = signedData?.signedUrl || null;
-      }
-      return { ...doc, generated_pdf_url: generatedPdfUrl };
-    })
-  );
+  const documents = (data || []).map((doc) => ({
+    ...doc,
+    generated_pdf_url: doc.generated_pdf_path || null,
+  }));
 
   return NextResponse.json({ documents });
 }
