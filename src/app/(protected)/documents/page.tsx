@@ -186,14 +186,21 @@ export default function DocumentsPage() {
                           </td>
                           <td className="px-4 py-3 text-sm">
                             {doc.generated_pdf_url ? (
-                              <a
-                                href={doc.generated_pdf_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
+                              <button
+                                onClick={async () => {
+                                  const res = await fetch(doc.generated_pdf_url!);
+                                  const blob = await res.blob();
+                                  const url = URL.createObjectURL(blob);
+                                  const a = document.createElement("a");
+                                  a.href = url;
+                                  a.download = doc.file_name;
+                                  a.click();
+                                  URL.revokeObjectURL(url);
+                                }}
                                 className="text-blue-600 hover:underline"
                               >
                                 Download
-                              </a>
+                              </button>
                             ) : (
                               <span className="text-gray-400">Pending</span>
                             )}
