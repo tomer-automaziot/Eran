@@ -19,6 +19,7 @@ function StatusBadge({ status }: { status: string }) {
     complete: "bg-green-100 text-green-700",
     completed: "bg-green-100 text-green-700",
     failed: "bg-red-100 text-red-700",
+    error: "bg-red-100 text-red-700",
   };
 
   return (
@@ -39,6 +40,7 @@ function ProgressBar({ progress, status }: { progress: number; status: string })
     complete: "bg-green-500",
     completed: "bg-green-500",
     failed: "bg-red-500",
+    error: "bg-red-500",
   };
 
   return (
