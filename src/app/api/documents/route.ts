@@ -12,7 +12,7 @@ export async function GET() {
   const { data, error } = await admin
     .from("pdf_documents")
     .select("*")
-    .order("uploaded_at", { ascending: false });
+    .order("created_at", { ascending: false });
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -20,6 +20,7 @@ export async function GET() {
 
   const documents = (data || []).map((doc) => ({
     ...doc,
+    uploaded_at: doc.created_at,
     generated_pdf_url: doc.generated_pdf_path || null,
   }));
 

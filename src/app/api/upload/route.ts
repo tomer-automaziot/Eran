@@ -42,7 +42,6 @@ export async function POST(request: Request) {
         .insert({
           file_name: file.name,
           storage_path: storagePath,
-          file_size: file.size,
         })
         .select()
         .single();
