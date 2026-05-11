@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/auth";
-import { createServerClient } from "@/lib/supabase";
+import { createServerClient, createAdminClient } from "@/lib/supabase";
 
 export async function POST(request: Request) {
-  const session = await getSession();
-  if (!session) {
+  const supabase = await createServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "No files provided" }, { status: 400 });
     }
 
-    const supabase = createServerClient();
+    const admin = createAdminClient();
     const results = [];
 
     for (const file of files) {
@@ -26,21 +26,18 @@ export async function POST(request: Request) {
 
       const timestamp = Date.now();
       const storagePath = `uploads/${timestamp}_${file.name}`;
-
       const buffer = Buffer.from(await file.arrayBuffer());
 
-      const { error: uploadError } = await supabase.storage
+      const { error: uploadError } = await admin.storage
         .from("pdfs")
-        .upload(storagePath, buffer, {
-          contentType: "application/pdf",
-        });
+        .upload(storagePath, buffer, { contentType: "application/pdf" });
 
       if (uploadError) {
         console.error("Upload error:", uploadError);
         continue;
       }
 
-      const { data, error: insertError } = await supabase
+      const { data, error: insertError } = await admin
         .from("pdf_documents")
         .insert({
           file_name: file.name,

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createServerClient } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase";
 
 export async function POST(request: Request) {
   const authHeader = request.headers.get("authorization");
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     if (continue_fill_url !== undefined) updateFields.continue_fill_url = continue_fill_url;
     if (generated_pdf_path !== undefined) updateFields.generated_pdf_path = generated_pdf_path;
 
-    const supabase = createServerClient();
+    const supabase = createAdminClient();
 
     const { error } = await supabase
       .from("pdf_documents")
